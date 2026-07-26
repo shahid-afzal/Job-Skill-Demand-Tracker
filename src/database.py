@@ -51,3 +51,33 @@ def get_all_jobs(connection):
     cursor.execute("SELECT * FROM jobs")
     jobs = cursor.fetchall()
     return jobs
+
+
+#Job Skills database design
+
+def create_job_skills_table(connection):
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS job_skills(
+            job_id TEXT,
+            skill TEXT,
+            date_fetched TEXT,
+            PRIMARY KEY (job_id, skill)
+
+        )
+    
+    """)
+    connection.commit()
+
+def insert_job_skill(connection, job_id, skill, date_fetched):
+    cursor = connection.cursor()
+    cursor.execute("""
+        INSERT INTO job_skills(job_id, skill, date_fetched)
+        VALUES(?,?,?)
+    """, (job_id, skill, date_fetched))
+
+    connection.commit()
+
+def insert_job_skills(connection, job_id, skills, date_fetched):
+    for skill in skills:
+        insert_job_skill(connection, job_id, skill, date_fetched)
