@@ -10,8 +10,8 @@ create_job_skills_table(connection)
 try:
     jobs = fetch_jobs(
     keyword="python",
-    country="gb",
-    results_per_page=5,
+    country="in",
+    results_per_page=10,
     page=1
     )
 except Exception as e:

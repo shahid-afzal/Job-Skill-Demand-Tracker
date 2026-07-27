@@ -35,9 +35,20 @@ def insert_job(connection, job):
 
     cursor = connection.cursor()
     cursor.execute("""
-        INSERT OR IGNORE INTO jobs (job_id, title, company, location, description, created, category, redirect_url, date_fetched)
+        INSERT INTO jobs (job_id, title, company, location, description, created, category, redirect_url, date_fetched)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (job_id, title, company, location, description, created, category, redirect_url, date_fetched))
+        ON CONFLICT (job_id) 
+        DO UPDATE SET 
+        title = excluded.title,
+        company = excluded.company,
+        location = excluded.location,
+        description = excluded.description,
+        category = excluded.category,
+        redirect_url = excluded.redirect_url,
+        date_fetched = excluded.date_fetched
+        """, (job_id, title, company, location, description, created, category, redirect_url, date_fetched)
+        
+    )
     connection.commit()
 
 
@@ -63,7 +74,6 @@ def create_job_skills_table(connection):
             skill TEXT,
             date_fetched TEXT,
             PRIMARY KEY (job_id, skill)
-
         )
     
     """)
@@ -74,6 +84,8 @@ def insert_job_skill(connection, job_id, skill, date_fetched):
     cursor.execute("""
         INSERT INTO job_skills(job_id, skill, date_fetched)
         VALUES(?,?,?)
+        ON CONFLICT (job_id, skill)
+        DO UPDATE SET date_fetched = excluded.date_fetched
     """, (job_id, skill, date_fetched))
 
     connection.commit()
