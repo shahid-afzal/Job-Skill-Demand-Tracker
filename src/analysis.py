@@ -1,3 +1,6 @@
+import csv
+import os
+
 def get_top_skills(connection):
     cursor = connection.cursor()
     cursor.execute("""
@@ -58,3 +61,15 @@ def get_top_companies(connection):
 
     result = cursor.fetchall()
     return result
+
+def export_to_csv(results, filename, header):
+    os.makedirs("results", exist_ok=True)
+
+    with open(f"results/{filename}", "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(header)
+
+        for row in results:
+            writer.writerow(row)
+        
+
